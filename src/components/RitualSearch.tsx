@@ -71,12 +71,14 @@ const RitualSearch: React.FC<RitualSearchProps> = ({ onSearch }) => {
         </form>
       </div>
       
-      <style jsx>{`
+      <style>
+        {`
         @keyframes fadeout {
           0% { opacity: 0.3; transform: translateY(-50%) translateX(0); }
           100% { opacity: 0; transform: translateY(-50%) translateX(20px); }
         }
-      `}</style>
+        `}
+      </style>
     </div>
   );
 };

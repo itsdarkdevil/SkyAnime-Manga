@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Eye, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Link } from 'react-router-dom';
 
 interface MangaCardProps {
   id: string;
@@ -87,9 +88,9 @@ const MangaCard: React.FC<MangaCardProps> = ({ id, title, coverImage, genres }) 
         "absolute inset-0 flex items-center justify-center bg-infernal-black/50 backdrop-blur-sm",
         "opacity-0 group-hover:opacity-100 transition-all duration-500"
       )}>
-        <button className="ritual-button text-sm scale-90 group-hover:scale-100">
+        <Link to={`/manga/${id}`} className="ritual-button text-sm scale-90 group-hover:scale-100">
           Read Now <span className="ml-1">&#8594;</span>
-        </button>
+        </Link>
       </div>
     </div>
   );

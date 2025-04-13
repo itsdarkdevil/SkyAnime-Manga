@@ -5,9 +5,11 @@ import {
   BookOpen, 
   Skull, 
   Search, 
-  Flame 
+  Flame,
+  Info
 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Link } from 'react-router-dom';
 
 const Header: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -34,10 +36,10 @@ const Header: React.FC = () => {
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="relative flex items-center">
           <div className="absolute inset-0 pentagram-bg animate-slow-spin opacity-30"></div>
-          <h1 className="font-demonic text-2xl md:text-3xl lg:text-4xl text-white relative">
+          <Link to="/" className="font-demonic text-2xl md:text-3xl lg:text-4xl text-white relative">
             <span className="mr-1 animate-pulse-glow text-infernal-crimson">Sky</span>
             <span className="animate-flicker">Anime</span>
-          </h1>
+          </Link>
         </div>
         
         {isMobile ? (
@@ -54,9 +56,9 @@ const Header: React.FC = () => {
           </button>
         ) : (
           <nav className="flex space-x-1">
-            <a href="#" className="nav-link blood-drip">
+            <Link to="/" className="nav-link blood-drip">
               <Home size={18} className="icon" /> Home
-            </a>
+            </Link>
             <a href="#manga-vault" className="nav-link blood-drip">
               <BookOpen size={18} className="icon" /> Manga Vault
             </a>
@@ -69,6 +71,9 @@ const Header: React.FC = () => {
             <a href="#picks" className="nav-link blood-drip">
               <Flame size={18} className="icon" /> Demon's Picks
             </a>
+            <Link to="/about" className="nav-link blood-drip">
+              <Info size={18} className="icon" /> About
+            </Link>
           </nav>
         )}
       </div>
@@ -81,21 +86,24 @@ const Header: React.FC = () => {
           }`}
         >
           <nav className="flex flex-col py-2">
-            <a href="#" className="nav-link py-3 px-6">
+            <Link to="/" className="nav-link py-3 px-6" onClick={() => setMenuOpen(false)}>
               <Home size={18} className="icon" /> Home
-            </a>
-            <a href="#manga-vault" className="nav-link py-3 px-6">
+            </Link>
+            <a href="#manga-vault" className="nav-link py-3 px-6" onClick={() => setMenuOpen(false)}>
               <BookOpen size={18} className="icon" /> Manga Vault
             </a>
-            <a href="#dark-genres" className="nav-link py-3 px-6">
+            <a href="#dark-genres" className="nav-link py-3 px-6" onClick={() => setMenuOpen(false)}>
               <Skull size={18} className="icon" /> Dark Genres
             </a>
-            <a href="#search" className="nav-link py-3 px-6">
+            <a href="#search" className="nav-link py-3 px-6" onClick={() => setMenuOpen(false)}>
               <Search size={18} className="icon" /> Cursed Search
             </a>
-            <a href="#picks" className="nav-link py-3 px-6">
+            <a href="#picks" className="nav-link py-3 px-6" onClick={() => setMenuOpen(false)}>
               <Flame size={18} className="icon" /> Demon's Picks
             </a>
+            <Link to="/about" className="nav-link py-3 px-6" onClick={() => setMenuOpen(false)}>
+              <Info size={18} className="icon" /> About
+            </Link>
           </nav>
         </div>
       )}
