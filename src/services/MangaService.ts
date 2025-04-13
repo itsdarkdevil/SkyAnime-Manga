@@ -47,7 +47,7 @@ export const getMangaByTitle = async (title: string): Promise<string | null> => 
     const data = await response.json();
     const mangaList = JSON.parse(data.contents).data;
     
-    if (!mangaList.length) {
+    if (!mangaList || !mangaList.length) {
       return null;
     }
     
@@ -70,7 +70,16 @@ export const getAllChapters = async (mangaId: string): Promise<Chapter[]> => {
       const chaptersUrl = `https://api.mangadex.org/chapter?manga=${mangaId}&translatedLanguage[]=en&order[chapter]=asc&limit=${limit}&offset=${offset}`;
       const response = await fetch(`${CORS_PROXY}${encodeURIComponent(chaptersUrl)}`);
       const data = await response.json();
+      
+      if (!data.contents) {
+        return allChapters;
+      }
+      
       const json = JSON.parse(data.contents);
+      
+      if (!json.data || !json.total) {
+        return allChapters;
+      }
       
       const newChapters = json.data;
       const total = json.total;
@@ -78,7 +87,7 @@ export const getAllChapters = async (mangaId: string): Promise<Chapter[]> => {
       const formattedChapters = newChapters.map((chap: any) => ({
         id: chap.id,
         chapter: chap.attributes.chapter || "?",
-        title: chap.attributes.title || `Chapter ${chap.attributes.chapter}`,
+        title: chap.attributes.title || `Chapter ${chap.attributes.chapter || '?'}`,
         publishedAt: chap.attributes.publishAt
       }));
       
@@ -119,15 +128,15 @@ export const getChapterPages = async (chapterId: string): Promise<string[]> => {
   }
 };
 
-// Get featured/trending manga
-export const getFeaturedManga = async (): Promise<Manga[]> => {
+// Get trending manga from Kitsu API
+export const getTrendingManga = async (): Promise<Manga[]> => {
   try {
     const encodedQuery = encodeURIComponent(`https://kitsu.io/api/edge/trending/manga`);
     const response = await fetch(`${CORS_PROXY}${encodedQuery}`);
     const data = await response.json();
     
     if (!data.contents) {
-      return [];
+      return getDefaultManga();
     }
     
     const results = JSON.parse(data.contents).data || [];
@@ -148,8 +157,8 @@ export const getFeaturedManga = async (): Promise<Manga[]> => {
       };
     });
   } catch (error) {
-    console.error('Error fetching featured manga:', error);
-    return [];
+    console.error('Error fetching trending manga:', error);
+    return getDefaultManga();
   }
 };
 

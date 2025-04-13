@@ -6,11 +6,13 @@ import HeroSection from '@/components/HeroSection';
 import MangaCard from '@/components/MangaCard';
 import GenreOrbs from '@/components/GenreOrbs';
 import RitualSearch from '@/components/RitualSearch';
+import TrendingManga from '@/components/TrendingManga';
 import Footer from '@/components/Footer';
 import { getDefaultManga, searchManga } from '@/services/MangaService';
 import { Manga } from '@/types/mangaTypes';
 import { Skull, Flame, BookOpen } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
+import { Link } from 'react-router-dom';
 
 const Index = () => {
   const [showIntro, setShowIntro] = useState(true);
@@ -29,8 +31,6 @@ const Index = () => {
     // Load default manga for demo
     const loadManga = async () => {
       try {
-        // In a full implementation, this would call the API
-        // const manga = await getFeaturedManga();
         const manga = getDefaultManga();
         setFeaturedManga(manga);
         setIsLoading(false);
@@ -70,6 +70,28 @@ const Index = () => {
       console.error('Search error:', error);
       toast({
         title: "Search failed",
+        description: "The ritual was interrupted. Try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGenreClick = async (genre: string) => {
+    setIsLoading(true);
+    try {
+      const results = await searchManga(genre);
+      setSearchResults(results);
+      
+      toast({
+        title: genre,
+        description: `${results.length} occult texts found in this genre.`,
+      });
+    } catch (error) {
+      console.error('Genre search error:', error);
+      toast({
+        title: "Failed to search genre",
         description: "The ritual was interrupted. Try again.",
         variant: "destructive"
       });
@@ -119,8 +141,11 @@ const Index = () => {
           )}
         </section>
         
+        {/* Trending Manga Section */}
+        <TrendingManga />
+        
         {/* Genres Section */}
-        <section id="dark-genres" className="py-16 bg-infernal-voidGray">
+        <section id="dark-genres" className="py-16 bg-infernal-black">
           <div className="container mx-auto px-4">
             <div className="flex items-center mb-10">
               <div className="h-[1px] flex-grow bg-gradient-to-r from-transparent via-infernal-crimson/30 to-transparent"></div>
@@ -131,7 +156,7 @@ const Index = () => {
               <div className="h-[1px] flex-grow bg-gradient-to-r from-transparent via-infernal-crimson/30 to-transparent"></div>
             </div>
             
-            <GenreOrbs genres={genres} />
+            <GenreOrbs genres={genres} onGenreClick={handleGenreClick} />
           </div>
         </section>
         

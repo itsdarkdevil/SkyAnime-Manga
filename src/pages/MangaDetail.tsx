@@ -22,9 +22,6 @@ const MangaDetail = () => {
   useEffect(() => {
     const fetchManga = async () => {
       try {
-        // In a real implementation, you would fetch manga details from Kitsu API using the id
-        // For now, we're using the demo data
-        
         // Find manga from your existing array based on ID
         const demoManga = [
           {
@@ -103,7 +100,17 @@ const MangaDetail = () => {
           
           // Try to get MangaDex ID for this manga
           const mdId = await getMangaByTitle(demoManga.title);
-          setMangaDexId(mdId);
+          if (mdId) {
+            setMangaDexId(mdId);
+            // Auto-load chapters if we have a MangaDex ID
+            loadChapters(mdId);
+          } else {
+            toast({
+              title: "Manga identification failed",
+              description: "Could not find this manga in MangaDex.",
+              variant: "destructive"
+            });
+          }
         } else {
           toast({
             title: "Manga not found",
@@ -126,8 +133,10 @@ const MangaDetail = () => {
     fetchManga();
   }, [id, toast]);
 
-  const loadChapters = async () => {
-    if (!mangaDexId) {
+  const loadChapters = async (mdId: string = '') => {
+    const mangaId = mdId || mangaDexId;
+    
+    if (!mangaId) {
       toast({
         title: "Chapters unavailable",
         description: "This forbidden text's chapters cannot be found in the archives.",
@@ -139,7 +148,7 @@ const MangaDetail = () => {
     setChaptersLoading(true);
     
     try {
-      const allChapters = await getAllChapters(mangaDexId);
+      const allChapters = await getAllChapters(mangaId);
       setChapters(allChapters);
       
       if (allChapters.length === 0) {
@@ -238,7 +247,7 @@ const MangaDetail = () => {
               {/* Action buttons */}
               <div className="mt-4 space-y-2">
                 <button 
-                  onClick={loadChapters}
+                  onClick={() => loadChapters()}
                   disabled={chaptersLoading}
                   className="ritual-button w-full flex items-center justify-center"
                 >
@@ -317,7 +326,10 @@ const MangaDetail = () => {
               {chapters.length > 0 && (
                 <div className="mt-8">
                   <Separator className="bg-infernal-crimson/30 mb-4" />
-                  <h3 className="text-white/90 font-ritual text-xl mb-4">Chapters</h3>
+                  <h3 className="text-white/90 font-ritual text-xl mb-4 flex items-center">
+                    <BookOpen className="mr-2 text-infernal-crimson" size={20} />
+                    Chapters
+                  </h3>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                     {chapters.slice(0, 12).map((chapter) => (
